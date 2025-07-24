@@ -2,7 +2,6 @@ import streamlit as st
 import requests
 import json
 import base64
-from .env
 # --- Configuration ---
 OLLAMA_API_URL = "http://localhost:11434/api/chat"
 # IMPORTANT: Ensure you have pulled this model with 'ollama pull openbmb/minicpm-o2.6:8b'
