@@ -39,7 +39,7 @@ ollama pull openbmb/minicpm-o2.6:8b
 streamlit run main.py
 ```
 
-2. Open the web using local URL: http://localhost:8501 or Network URL: http://<yourip>:8501.
+2. Open the web using local URL: http://localhost:8501 or Network URL: http://your_ip:8501.
 
 3. Enjoy an interactive chat.
 
