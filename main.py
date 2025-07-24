@@ -14,9 +14,15 @@ st.caption(f"Powered by Ollama (running {DEFAULT_MODEL} locally)")
 
 # Initialize chat history and pending image in Streamlit's session state
 if "messages" not in st.session_state:
-    st.session_state.messages = []
-if "pending_image" not in st.session_state:
-    st.session_state.pending_image = None # Stores {"image": base64_string, "mimeType": type}
+    st.session_state.messages = [
+        {"role": "system", "content": "You are a helpful assistant."}
+    ]
+# Use a session state key to force uploader to reset by changing the key
+if "upload_key" not in st.session_state:
+    st.session_state.upload_key = 0
+# Use a session state key to force uploader to reset by changing the key
+if "uploaded_file" not in st.session_state:
+    st.session_state.uploaded_file = 0
 
 # --- Function to interact with Ollama ---
 def get_ollama_response(current_user_message_parts , model=DEFAULT_MODEL):
@@ -75,38 +81,44 @@ def get_ollama_response(current_user_message_parts , model=DEFAULT_MODEL):
         st.error(f"An unexpected error occurred: {e}")
         return "Error: An unexpected error occurred."
 
-
+# Display past conversation using chat bubbles
+for msg in st.session_state.messages:
+    if msg["role"] != "system":
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
 
 # --- User input and chat logic ---
 
 # File uploader for images
 # This will update st.session_state.pending_image when a file is uploaded
-uploaded_image = st.file_uploader("Upload an image (optional)", type=["jpg", "jpeg", "png"], key="image_uploader")
-
+uploaded_image = st.file_uploader("Upload an image (optional)", type=["jpg", "jpeg", "png"], key=f"uploader_{st.session_state.upload_key}")
+if uploaded_image is not None:
+    print(f"check debug upload file")
+    st.session_state.uploaded_file = uploaded_image.read()
 # Text input for prompt
 # This will trigger the message sending logic
 prompt = st.chat_input("Ask me anything...")
 
 if prompt: # Only proceed if a text prompt is entered
-    if uploaded_image:
+    if st.session_state.uploaded_file is not None:
     # Read image as bytes and encode to base64
-        image_bytes = uploaded_image.read()
-        image_base64 = base64.b64encode(image_bytes).decode('utf-8')
-    else: image_base64 = None
-    # If there's a pending image, add it to the current message parts
-    if image_base64:
+        image_base64 = base64.b64encode(st.session_state.uploaded_file).decode('utf-8')
         msg = {"role": "user", "content": prompt, "images": [image_base64]}
         # Clear the pending image after it's used
         # Clear the uploader widget visually
-        uploaded_image = None # This might not immediately clear the widget in all Streamlit versions, but helps manage state.
-    else:
+        print(f"check debug {uploaded_image}")
+        st.session_state.uploaded_file = None # This might not immediately clear the widget in all Streamlit versions, but helps manage state.
+        st.session_state.upload_key += 1
+        uploaded_image = None
+    else: 
         msg = {"role": "user", "content": prompt,  "images": None}
 
     # Display the combined user message (image + text) in the chat
     with st.chat_message("user"):
         st.markdown(msg["content"])
         if msg["images"] is not None:
-            st.image(f"data:png;base64,{image_base64}", use_column_width=True)
+            for image in msg["images"] :
+                st.image(f"data:png;base64,{image}", use_column_width=True)
 
     # Add combined user message (text and/or image) to chat history
     st.session_state.messages.append(msg)
