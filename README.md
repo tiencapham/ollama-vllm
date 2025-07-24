@@ -39,7 +39,7 @@ ollama pull openbmb/minicpm-o2.6:8b
 streamlit run main.py
 ```
 
-2. Open the web using local URL: http://localhost:8501 or Network URL: http://10.206.49.144:8501.
+2. Open the web using local URL: http://localhost:8501 or Network URL: http://<yourip>:8501.
 
 3. Enjoy an interactive chat.
 
@@ -54,3 +54,4 @@ ollama stop openbmb/minicpm-o2.6:8b
 You can list all of running models using ```ollama ps```.
 
 2. GPU or CPU usage. Ollama will automaticly detect you GPU and will prioritize running on GPU if you have enough VRAM to run the model. Or it can be offloading to allow efficient inference.
+
