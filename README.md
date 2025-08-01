@@ -43,6 +43,9 @@ streamlit run main.py
 
 3. Enjoy an interactive chat.
 
+# Demo
+[![Watch the video](https:/img.youtube.com/watch?v=GzIvpj-MrjA)](https://www.youtube.com/watch?v=GzIvpj-MrjA)
+
 # Troubleshoot
 
 1. Ollama server still running after you terminate the process of this app. To stop the ollama server and release the GPU VRAM or CPU RAM, we have to stop the server using:
